@@ -25,11 +25,17 @@ module Kibi
     end
   end
 
+  def self.refresh_screen
+    # Safe code: "\x1b[2J".bytes.each { |byte| STDOUT.write_byte byte }
+    STDOUT.write("\x1b[2J".to_slice)
+  end
+
   puts "Welcome!"
 
   begin
     STDIN.raw do
       loop do
+        refresh_screen
         break if process_input == :exit
       end
     end
