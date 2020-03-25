@@ -29,7 +29,7 @@ module Kibi
           put "#{input_char.ord} #{input_char}"
         end
 
-        break if input_char == 'q'
+        break if input_char == 23.chr
       end
     end
   rescue exception
