@@ -2,6 +2,7 @@
 module Kibi
   VERSION = "0.1.0"
 
-  while input = gets(1)
+  p "Welcome!"
+  while (input = gets(1)) && input != "q"
   end
 end
