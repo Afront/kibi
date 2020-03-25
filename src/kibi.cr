@@ -10,12 +10,18 @@ module Kibi
   puts "Welcome!"
 
   STDIN.raw do
-    while (input_char = STDIN.read_char) && input_char != 'q'
+    loop do
+      # input_char = '\0'
+      # input_char ||= STDIN.read_char
+      input_char = (STDIN.read_char || '\0')
+
       if input_char.control?
         put input_char.ord
       else
         put "#{input_char.ord} #{input_char}"
       end
+
+      break if input_char == 'q'
     end
   end
 end
