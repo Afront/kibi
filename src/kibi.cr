@@ -28,6 +28,7 @@ module Kibi
   def self.refresh_screen
     # Safe code: "\x1b[2J".bytes.each { |byte| STDOUT.write_byte byte }
     STDOUT.write("\x1b[2J".to_slice)
+    STDOUT.write("\x1b[H".to_slice)
   end
 
   puts "Welcome!"
@@ -41,5 +42,7 @@ module Kibi
     end
   rescue exception
     puts exception.message
+  ensure
+    refresh_screen
   end
 end
