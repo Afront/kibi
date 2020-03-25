@@ -15,21 +15,22 @@ module Kibi
     end
   end
 
+  def self.process_input
+    get_input
+    input_char = CHANNEL.receive
+
+    case input_char
+    when 23.chr
+      return :exit
+    end
+  end
+
   puts "Welcome!"
 
   begin
     STDIN.raw do
       loop do
-        get_input
-        input_char = CHANNEL.receive
-
-        if input_char.control?
-          put input_char.ord
-        else
-          put "#{input_char.ord} #{input_char}"
-        end
-
-        break if input_char == 23.chr
+        break if process_input == :exit
       end
     end
   rescue exception
