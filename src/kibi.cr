@@ -2,7 +2,10 @@
 module Kibi
   VERSION = "0.1.0"
 
-  p "Welcome!"
-  while (input = gets(1)) && input != "q"
+  puts "Welcome!"
+
+  STDIN.raw do
+    while (input_char = STDIN.read_char) && input_char != 'q'
+    end
   end
 end
