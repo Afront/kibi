@@ -29,6 +29,14 @@ module Kibi
     # Safe code: "\x1b[2J".bytes.each { |byte| STDOUT.write_byte byte }
     STDOUT.write("\x1b[2J".to_slice)
     STDOUT.write("\x1b[H".to_slice)
+    place_tildes
+    STDOUT.write("\x1b[H".to_slice)
+  end
+
+  def self.place_tildes
+    `stty size`.partition(' ').first.to_i.succ.times do
+      put '~'
+    end
   end
 
   puts "Welcome!"
@@ -43,6 +51,6 @@ module Kibi
   rescue exception
     puts exception.message
   ensure
-    refresh_screen
+    STDOUT.write("\x1b[2J".to_slice)
   end
 end
