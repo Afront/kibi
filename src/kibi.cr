@@ -17,18 +17,22 @@ module Kibi
 
   puts "Welcome!"
 
-  STDIN.raw do
-    loop do
-      get_input
-      input_char = CHANNEL.receive
+  begin
+    STDIN.raw do
+      loop do
+        get_input
+        input_char = CHANNEL.receive
 
-      if input_char.control?
-        put input_char.ord
-      else
-        put "#{input_char.ord} #{input_char}"
+        if input_char.control?
+          put input_char.ord
+        else
+          put "#{input_char.ord} #{input_char}"
+        end
+
+        break if input_char == 'q'
       end
-
-      break if input_char == 'q'
     end
+  rescue exception
+    puts exception.message
   end
 end
