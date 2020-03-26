@@ -9,6 +9,19 @@ module Kibi
     print "\x1b[2J"
   end
 
+  def self.get_cursor_position
+    buf = Array.new(32) { |i| '\0' }
+
+    # [] of Char # Array(Char).new(32)
+    put "\x1b[6n"
+    31.times do |i|
+      get_input
+      break unless (buf[i] = CHANNEL.receive) && buf[i] != 'R'
+    end
+
+    buf.compact_map { |c| c.to_i? }
+  end
+
   def self.reposition_cursor
     print "\x1b[H"
   end
