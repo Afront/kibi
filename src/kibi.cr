@@ -1,18 +1,14 @@
 # TODO: Write documentation for `Kibi`
 module Kibi
-  VERSION = "0.1.0"
-  CRLF    = "\r\n"
-
-  CHANNEL = Channel(Char).new
-
-  def self.clear_screen
-    "\x1b[2J"
-  end
+  VERSION           = "0.1.0"
+  CRLF              = "\r\n"
+  CLEAR_SCREEN      = "\x1b[2J"
+  REPOSITION_CURSOR = "\x1b[H"
+  CHANNEL           = Channel(Char).new
 
   def self.get_cursor_position
     buf = Array.new(32) { |i| '\0' }
 
-    # [] of Char # Array(Char).new(32)
     put "\x1b[6n"
     31.times do |i|
       get_input
@@ -20,10 +16,6 @@ module Kibi
     end
 
     buf.compact_map { |c| c.to_i? }
-  end
-
-  def self.reposition_cursor
-    "\x1b[H"
   end
 
   def self.place_tildes
@@ -51,24 +43,23 @@ module Kibi
   end
 
   def self.refresh_screen
-    put clear_screen +
-        reposition_cursor +
+    put CLEAR_SCREEN +
+        REPOSITION_CURSOR +
         place_tildes +
-        reposition_cursor
+        REPOSITION_CURSOR
   end
 
   begin
     STDIN.raw do
       loop do
         refresh_screen
-        get_cursor_position
-        reposition_cursor
+        # get_cursor_position
         break if process_input == :exit
       end
     end
-    puts clear_screen
+    puts CLEAR_SCREEN
   rescue exception
-    puts clear_screen + exception.message
+    puts CLEAR_SCREEN, exception.message
   ensure
     # clear_screen
     # get_cursor_position
