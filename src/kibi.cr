@@ -5,6 +5,21 @@ module Kibi
 
   CHANNEL = Channel(Char).new
 
+  def self.clear_screen
+    print "\x1b[2J"
+  end
+
+  def self.reposition_cursor
+    print "\x1b[H"
+  end
+
+  def self.place_tildes
+    `stty size`.partition(' ').first.to_i.times do
+      put '~'
+    end
+    print '~'
+  end
+
   def self.put(text)
     print text.to_s + CRLF
   end
@@ -26,31 +41,25 @@ module Kibi
   end
 
   def self.refresh_screen
-    # Safe code: "\x1b[2J".bytes.each { |byte| STDOUT.write_byte byte }
-    STDOUT.write("\x1b[2J".to_slice)
-    STDOUT.write("\x1b[H".to_slice)
+    clear_screen
+    reposition_cursor
     place_tildes
-    STDOUT.write("\x1b[H".to_slice)
+    reposition_cursor
   end
-
-  def self.place_tildes
-    `stty size`.partition(' ').first.to_i.succ.times do
-      put '~'
-    end
-  end
-
-  puts "Welcome!"
 
   begin
     STDIN.raw do
       loop do
         refresh_screen
+        reposition_cursor
         break if process_input == :exit
       end
     end
+    clear_screen
   rescue exception
+    clear_screen
     puts exception.message
   ensure
-    STDOUT.write("\x1b[2J".to_slice)
+    #    clear_screen
   end
 end
