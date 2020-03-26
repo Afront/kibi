@@ -6,7 +6,7 @@ module Kibi
   CHANNEL = Channel(Char).new
 
   def self.clear_screen
-    print "\x1b[2J"
+    "\x1b[2J"
   end
 
   def self.get_cursor_position
@@ -23,14 +23,11 @@ module Kibi
   end
 
   def self.reposition_cursor
-    print "\x1b[H"
+    "\x1b[H"
   end
 
   def self.place_tildes
-    `stty size`.partition(' ').first.to_i.times do
-      put '~'
-    end
-    print '~'
+    "~#{CRLF}" * `stty size`.partition(' ').first.to_i + '~'
   end
 
   def self.put(text)
@@ -54,25 +51,26 @@ module Kibi
   end
 
   def self.refresh_screen
-    clear_screen
-    reposition_cursor
-    place_tildes
-    reposition_cursor
+    put clear_screen +
+        reposition_cursor +
+        place_tildes +
+        reposition_cursor
   end
 
   begin
     STDIN.raw do
       loop do
         refresh_screen
+        get_cursor_position
         reposition_cursor
         break if process_input == :exit
       end
     end
-    clear_screen
+    puts clear_screen
   rescue exception
-    clear_screen
-    puts exception.message
+    puts clear_screen + exception.message
   ensure
-    #    clear_screen
+    # clear_screen
+    # get_cursor_position
   end
 end
