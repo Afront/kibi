@@ -3,8 +3,13 @@ module Kibi
   VERSION           = "0.1.0"
   CRLF              = "\r\n"
   CLEAR_SCREEN      = "\x1b[2J"
+  TILDE_CLEAR       = "~\x1b[K"
   REPOSITION_CURSOR = "\x1b[H"
   CHANNEL           = Channel(Char).new
+
+  def self.modify_cursor(hide = true)
+    "\x1b[?25#{hide ? "l" : "h"}"
+  end
 
   def self.get_cursor_position
     buf = Array.new(32) { |i| '\0' }
@@ -19,7 +24,7 @@ module Kibi
   end
 
   def self.place_tildes
-    "~#{CRLF}" * `stty size`.partition(' ').first.to_i + '~'
+    (TILDE_CLEAR + CRLF) * `stty size`.partition(' ').first.to_i + TILDE_CLEAR
   end
 
   def self.put(text)
@@ -43,10 +48,12 @@ module Kibi
   end
 
   def self.refresh_screen
-    put CLEAR_SCREEN +
+    put modify_cursor +
+        CLEAR_SCREEN +
         REPOSITION_CURSOR +
         place_tildes +
-        REPOSITION_CURSOR
+        REPOSITION_CURSOR +
+        modify_cursor(hide: false)
   end
 
   begin
